@@ -1,0 +1,142 @@
+﻿@using NamoriTravel.Authorize
+@model IEnumerable<NamoriTravel.Models.GroupViewModel>
+@{
+    ViewData["Title"] = "Groups";
+    var pagePermissions = ViewBag.PagePermissions as Dictionary<string, List<string>>;
+    var hasCreatePermission = PermissionHelper.HasPermission(pagePermissions, "Group", "Create");
+    var hasEditPermission = PermissionHelper.HasPermission(pagePermissions, "Group", "Update");
+    var hasDetailsPermission = PermissionHelper.HasPermission(pagePermissions, "Group", "Read");
+    var hasDeletePermission = PermissionHelper.HasPermission(pagePermissions, "Group", "Delete");
+}
+
+ <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-6">
+                        <h5 style="margin-top: 5px;">@ViewBag.TblTitle</h5>
+                    </div>
+                    <div class="col-6" style="text-align: end;">
+                            
+                             @if (hasCreatePermission)
+                        {
+                            <button type="button" class="btn btn-info add-new">Add New</button>
+                        }
+                    </div>
+                </div>
+               
+               
+            </div>
+            <div class="card-body">
+                <table class="GirdView table">
+                  
+                </table>
+            </div>
+        </div>
+
+
+@section Scripts{
+    <script>
+
+$(document).ready(function () 
+{
+    let globalId;
+    var table;
+    function DataTable() {
+       
+       table = GenricFunctions.bindDatatable(
+            '.GirdView', '/Group/ApiGetAll',
+            [
+                { data: "id", title: "Id", autoWidth: true, name: "Id", searchable: false, orderable: true },
+                { data: "groupName", title: "Group Name", autoWidth: true, name: "GroupName", orderable: true },
+            ],
+            "@hasDetailsPermission" == "True",
+            "@hasEditPermission" == "True",
+            "@hasDeletePermission" == "True"
+        );
+      
+        applyTranslations();
+    }
+
+DataTable();
+
+$('#saveChanges').on('click', function () {
+     var action = 'update';
+        var formDataArray = $('#recordForm').serializeArray();
+        var formDataObject = {};
+        $.each(formDataArray, function (index, field) {
+            formDataObject[field.name] = field.value;
+        });
+        var dataToSend = {
+            id: globalId,
+            DTO: formDataObject
+        };
+        $.ajax({
+            url: location.origin + '/Group/ApiUpdate',
+            type: 'POST',
+            data: dataToSend,
+            success: function () {
+                $('#recordModal').modal('hide');
+                table.ajax.reload();
+                  Alerts.showSuccessMessage(action);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error: ", status, error);
+                   Alerts.showErrorMessage(action);
+            }
+        });
+    });
+
+$('#saveNew').on('click', function () {
+     var action = 'add';
+        var formDataArray = $('#recordForm').serializeArray();
+        var formDataObject = {};
+        $.each(formDataArray, function (index, field) {
+            formDataObject[field.name] = field.value;
+        });
+        console.log("recordForm: ", JSON.stringify(dataToSend));
+            $.ajax({
+            type: 'POST',
+            url: location.origin + '/Group/ApiAdd',
+            data: {DTO:formDataObject},
+            success: function () {
+                $('#recordModal').modal('hide');
+                table.ajax.reload();
+                  Alerts.showSuccessMessage(action);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error: ", status, error);
+                   Alerts.showErrorMessage(action);
+            }
+        });
+        
+  });
+
+$(document).on('click', '.view-btn', function () {
+    var id = $(this).data('id');
+    globalId= id;
+    GenricFunctions.loadRecordData('view', id,'/Group/ApiGetById');
+});
+
+$(document).on('click', '.add-new', function () {
+    var id = 0;
+    globalId=0;
+    GenricFunctions.loadRecordData('add', id,'/Group/ApiGetById');
+});
+
+$(document).on('click', '.edit-btn', function () {
+    var id = $(this).data('id');
+    globalId = id;
+    GenricFunctions.loadRecordData('edit', id,'/Group/ApiGetById');
+});
+
+$(document).on('click', '.delete-btn', function () {
+    var id = $(this).data('id');
+    GenricFunctions.confirmDelete('/Group/ApiDelete',id,table);
+});
+ 
+
+
+});
+
+ </script>
+}

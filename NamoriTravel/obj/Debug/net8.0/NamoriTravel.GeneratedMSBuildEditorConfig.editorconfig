@@ -1,0 +1,195 @@
+is_global = true
+build_property.TargetFramework = net8.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = NamoriTravel
+build_property.RootNamespace = NamoriTravel
+build_property.ProjectDir = D:\Sindhi_Developer\Namori_Travel_V1\NamoriTravel\NamoriTravel\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 8.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = D:\Sindhi_Developer\Namori_Travel_V1\NamoriTravel\NamoriTravel
+build_property._RazorSourceGeneratorDebug = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/AccessManagement/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjZXNzTWFuYWdlbWVudFxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/AccessManagement/_PageAccessTreeView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjZXNzTWFuYWdlbWVudFxfUGFnZUFjY2Vzc1RyZWVWaWV3LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Account/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxMb2dpbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Account/Register.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxSZWdpc3Rlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Amenities/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQW1lbml0aWVzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Business/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQnVzaW5lc3NcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/City/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2l0eVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Country/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ291bnRyeVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Currency/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3VycmVuY3lcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Dashboard/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGFzaGJvYXJkXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Department/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGVwYXJ0bWVudFxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/DotwRequest/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRG90d1JlcXVlc3RcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Group/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR3JvdXBcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/NamoriTravels/getRooms.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTmFtb3JpVHJhdmVsc1xnZXRSb29tcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/NamoriTravels/HotelDetails - Copy (2).cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTmFtb3JpVHJhdmVsc1xIb3RlbERldGFpbHMgLSBDb3B5ICgyKS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/NamoriTravels/HotelDetails - Copy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTmFtb3JpVHJhdmVsc1xIb3RlbERldGFpbHMgLSBDb3B5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/NamoriTravels/HotelDetails.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTmFtb3JpVHJhdmVsc1xIb3RlbERldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/NamoriTravels/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTmFtb3JpVHJhdmVsc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Page/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGFnZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Permissions/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGVybWlzc2lvbnNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/RateBasis/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmF0ZUJhc2lzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Role/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUm9sZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Shared/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Shared/Error404.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yNDA0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Shared/PartialViewClient/_Currency.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXFBhcnRpYWxWaWV3Q2xpZW50XF9DdXJyZW5jeS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Shared/PartialViewClient/_Filters.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXFBhcnRpYWxWaWV3Q2xpZW50XF9GaWx0ZXJzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Shared/PartialViewClient/_Footer.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXFBhcnRpYWxWaWV3Q2xpZW50XF9Gb290ZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Shared/PartialViewClient/_Header.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXFBhcnRpYWxWaWV3Q2xpZW50XF9IZWFkZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Shared/PartialViewClient/_Language.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXFBhcnRpYWxWaWV3Q2xpZW50XF9MYW5ndWFnZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Shared/PartialViewClient/_Locations.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXFBhcnRpYWxWaWV3Q2xpZW50XF9Mb2NhdGlvbnMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Shared/PartialViewClient/_RateBasis.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXFBhcnRpYWxWaWV3Q2xpZW50XF9SYXRlQmFzaXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Shared/PartialViews/_Footer.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXFBhcnRpYWxWaWV3c1xfRm9vdGVyLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Shared/PartialViews/_Header.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXFBhcnRpYWxWaWV3c1xfSGVhZGVyLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Shared/PartialViews/_MenuItem.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXFBhcnRpYWxWaWV3c1xfTWVudUl0ZW0uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Shared/PartialViews/_Script.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXFBhcnRpYWxWaWV3c1xfU2NyaXB0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Shared/PartialViews/_Sidebar.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXFBhcnRpYWxWaWV3c1xfU2lkZWJhci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Shared/PartialViews/_Style.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXFBhcnRpYWxWaWV3c1xfU3R5bGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Shared/_Layout_Client.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXRfQ2xpZW50LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/User/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/XmlRequest/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcWG1sUmVxdWVzdFxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Sindhi_Developer/Namori_Travel_V1/NamoriTravel/NamoriTravel/Views/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-7spqzj35vk

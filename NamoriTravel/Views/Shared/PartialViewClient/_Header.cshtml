@@ -1,0 +1,56 @@
+﻿      <!-- ------------------------ Header Section  ------------------------------------ -->
+<header data-add-bg="bg-dark-1" class="header  js-header" data-x="header" data-x-toggle="is-menu-opened">
+    <div data-anim="fade" class="header__container container">
+        <div class="row justify-between items-center">
+
+            <div class="col-auto">
+                <div class="d-flex items-center">
+                    <a href="index.html" class="header-logo mr-30" data-x="header-logo" data-x-toggle="is-logo-dark">
+                        <img src="~/dashboard/img/general/logo-light-2.svg" alt="logo icon">
+                        <img src="~/dashboard/img/general/logo-dark.svg" alt="logo icon">
+                    </a>
+                </div>
+            </div>
+
+
+            <div class="col-auto">
+                <div class="d-flex items-center">
+
+                    <div class="row x-gap-20 items-center xxl:d-none">
+                        <div class="col-auto">
+                            <button class="d-flex items-center text-14 text-white" data-x-click="currency">
+                                <span class="js-currencyMenu-mainTitle" data-value="520">USD</span>
+                                <i class="icon-chevron-sm-down text-7 ml-10"></i>
+                            </button>
+                        </div>
+
+                        <div class="col-auto">
+                            <div class="w-1 h-20 bg-white-20"></div>
+                        </div>
+
+                        <div class="col-auto">
+                            <button class="d-flex items-center text-14 text-white" data-x-click="lang">
+                                <img src="~/dashboard/img/general/lang.png" alt="image" class="rounded-full mr-10">
+                                <span class="js-language-mainTitle">United Kingdom</span>
+                                <i class="icon-chevron-sm-down text-7 ml-15"></i>
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <div class="d-flex items-center ml-20 is-menu-opened-hide md:d-none">
+                        <a asp-controller="Account" asp-action="Login" class="button px-30 fw-400 text-14 -blue-1 bg-white h-50 text-dark-1">
+                            Login
+                        </a>
+                        <a asp-controller="Account" asp-action="Register" class="button px-30 fw-400 text-14 border-white -blue-1 h-50 text-white ml-20">
+                            Sign In / Register
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</header>
+
+<!-- ------------------------ Header Section End ------------------------------------ -->

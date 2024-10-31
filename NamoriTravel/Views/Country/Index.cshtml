@@ -1,0 +1,220 @@
+﻿@using NamoriTravel.Authorize
+@{
+    ViewData["Title"] = "Index";
+    var pagePermissions = ViewBag.PagePermissions as Dictionary<string, List<string>>;
+    var hasCreatePermission = PermissionHelper.HasPermission(pagePermissions, "Country", "Create");
+    var hasEditPermission = PermissionHelper.HasPermission(pagePermissions, "Country", "Update");
+    var hasDetailsPermission = PermissionHelper.HasPermission(pagePermissions, "Country", "Read");
+    var hasDeletePermission = PermissionHelper.HasPermission(pagePermissions, "Country", "Delete");
+}
+
+     <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-6">
+                        <h5 style="margin-top: 5px;">@ViewBag.TblTitle</h5>
+                    </div>
+                     @if (hasCreatePermission)
+            {
+                <div class="col-6 text-end">
+                    <button type="button" class="btn btn-info add-live">Add Live</button>
+                    <button type="button" class="btn btn-info add-new">Add New</button>
+                </div>
+            }
+
+                </div>
+               
+               
+            </div>
+            <div class="card-body">
+                <table class="GirdView table">
+                  
+                </table>
+            </div>
+        </div>
+
+<!-- Modal -->
+<div class="modal fade" id="countryModal" tabindex="-1" aria-labelledby="countryModalLabel" aria-hidden="true" style="display:none">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="countryModalLabel">Country List</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul id="countryListContainer" class="list-group">
+                    <!-- Dynamic Country List -->
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="saveChangesBtn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+
+$(document).ready(function () 
+{
+    let globalId;
+    var table;
+    function DataTable() {
+       table = GenricFunctions.bindDatatable(
+            '.GirdView', '/Country/ApiGetAll',
+            [
+                { data: "id", title: "Id", autoWidth: true, name: "Id", searchable: false, orderable: true },
+                { data: "name", title: "Country Name", autoWidth: true, name: "Name", orderable: true },
+                { data: "code", title: "Code", autoWidth: true, name: "Code", orderable: true }
+            ],
+            "@hasDetailsPermission" == "True",
+            "@hasEditPermission" == "True",
+            "@hasDeletePermission" == "True"
+        );
+        applyTranslations();
+    }
+
+DataTable();
+
+$('#saveChanges').on('click', function () {
+    var action = 'update';
+        var formDataArray = $('#recordForm').serializeArray();
+        var formDataObject = {};
+        $.each(formDataArray, function (index, field) {
+            formDataObject[field.name] = field.value;
+        });
+        var dataToSend = {
+            id: globalId,
+            DTO: formDataObject
+        };
+        $.ajax({
+            url: location.origin + '/Country/ApiUpdate',
+            type: 'POST',
+            data: dataToSend,
+            success: function () {
+                $('#recordModal').modal('hide');
+                table.ajax.reload();
+                Alerts.showSuccessMessage(action);
+            },
+            error: function (xhr, status, error) {
+                Alerts.showErrorMessage(action);
+                console.error("Error: ", status, error);
+            }
+        });
+    });
+
+$('#saveNew').on('click', function () {
+        var formDataArray = $('#recordForm').serializeArray();
+        var formDataObject = {};
+        $.each(formDataArray, function (index, field) {
+            formDataObject[field.name] = field.value;
+        });
+            var list;
+            $.ajax({
+            type: 'POST',
+            url: location.origin + '/Country/ApiAdd',
+            data: {
+                  DTO: formDataObject,
+                  DTOlist: JSON.stringify(list)
+                },
+            success: function () {
+                $('#recordModal').modal('hide');
+                 $('#countryModal').modal('hide');
+                table.ajax.reload();
+            },
+            error: function (xhr, status, error) {
+                console.error("Error: ", status, error);
+            }
+        });
+        
+  });
+
+$(document).on('click', '.view-btn', function () {
+    var id = $(this).data('id');
+    globalId= id;
+    GenricFunctions.loadRecordData('view', id,'/Country/ApiGetById');
+});
+
+$(document).on('click', '.add-new', function () {
+    var id = 0;
+    globalId=0;
+    GenricFunctions.loadRecordData('add', id,'/Country/ApiGetById');
+});
+
+$(document).on('click', '.add-live', function () {
+   $.ajax({
+    type: "GET",
+    url: location.origin+ '/Country/GetLiveCountries',
+    success: function (response) {
+        console.log('Countries load successfully'+response);
+        console.log('Countries load successfully'+response.data);
+        loadCountryList(response.data);
+        countryData = response.data;
+    },
+    error: function (error) {
+        console.log('Error loading countries:', error);
+    }
+});
+});
+
+$(document).on('click', '.edit-btn', function () {
+    var id = $(this).data('id');
+    globalId = id;
+    GenricFunctions.loadRecordData('edit', id,'/Country/ApiGetById');
+});
+
+$(document).on('click', '.delete-btn', function () {
+    var id = $(this).data('id');
+    GenricFunctions.GenricFunctions.confirmDelete('/Country/ApiDelete',id,table);
+});
+
+});
+var countryData;
+
+function loadCountryList(countryData) {
+    const countryListContainer = $('#countryListContainer');
+    countryListContainer.empty();  // Clear the existing list
+    countryData.forEach((country, index) => {
+        let countryItem = `
+            <li class="list-group-item d-flex justify-content-between align-items-center" data-id="${country.id}">
+                ${country.name} (${country.code})
+                <button type="button" class="btn btn-danger btn-sm remove-country-btn" data-index="${index}">X</button>
+            </li>
+        `;
+        countryListContainer.append(countryItem);
+    });
+    $('#countryModal').modal('show');
+}
+
+$(document).on('click', '.remove-country-btn', function () {
+    let countryIndex = $(this).data('index'); 
+    countryData.splice(countryIndex, 1);      
+    loadCountryList(countryData);             
+});
+
+$('#saveChangesBtn').on('click', function () {
+   var dto="";
+            $.ajax({
+            type: 'POST',
+            url: location.origin + '/Country/ApiAdd',
+           data: {
+                  DTO: dto,
+                  DTOlist: JSON.stringify(countryData)
+                },
+            success: function () {
+                 $('#countryModal').modal('hide');
+                table.ajax.reload();
+            },
+            error: function (xhr, status, error) {
+                console.error("Error: ", status, error);
+            }
+        });
+});
+
+loadCountryList(countryData);
+
+
+ </script>
+}

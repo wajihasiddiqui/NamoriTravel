@@ -1,0 +1,144 @@
+﻿@using NamoriTravel.Authorize
+@model IEnumerable<UserViewModel>
+
+@{
+    ViewData["Title"] = "Users";
+    var pagePermissions = ViewBag.PagePermissions as Dictionary<string, List<string>>;
+    var hasCreatePermission = PermissionHelper.HasPermission(pagePermissions, "User", "Create");
+    var hasEditPermission = PermissionHelper.HasPermission(pagePermissions, "User", "Update");
+    var hasDetailsPermission = PermissionHelper.HasPermission(pagePermissions, "User", "Read");
+    var hasDeletePermission = PermissionHelper.HasPermission(pagePermissions, "User", "Delete");
+}
+
+ <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-6">
+                        <h5 style="margin-top: 5px;">@ViewBag.TblTitle</h5>
+                    </div>
+                    <div class="col-6 "style="text-align: end;">
+                            
+                             @if (hasCreatePermission)
+                        {
+                            <button type="button" class="btn btn-info add-new">Add New</button>
+                        }
+                    </div>
+                </div>
+               
+               
+            </div>
+            <div class="card-body">
+                <table class="GirdView table">
+                  
+                </table>
+            </div>
+        </div>
+
+@section Scripts{
+    <script>
+
+$(document).ready(function () 
+{
+    let globalId;
+    var table;
+    function DataTable() {
+        $("#cover-spin").show();
+       table = GenricFunctions.bindDatatable(
+            '.GirdView', '/User/ApiGetAll',
+            [
+                { data: "id", title: "Id", autoWidth: true, name: "Id", searchable: false, orderable: true },
+                { data: "userName", title: "User Name", autoWidth: true, name: "UserName", orderable: true },
+                { data: "email", title: "Email", autoWidth: true, orderable: false },
+                { data: "uRoleName", title: "Role", autoWidth: true, orderable: false },
+                { data: "uGroupName", title: "Group", autoWidth: true, orderable: false },
+                { data: "uDepartmentName", title: "Department", autoWidth: true, orderable: false },
+            ],
+            "@hasDetailsPermission" == "True",
+            "@hasEditPermission" == "True",
+            "@hasDeletePermission" == "True"
+        );
+        $("#cover-spin").hide();
+        applyTranslations();
+    }
+
+DataTable();
+
+$('#saveChanges').on('click', function () {
+         var action = 'update';
+        var formDataArray = $('#recordForm').serializeArray();
+        var formDataObject = {};
+        $.each(formDataArray, function (index, field) {
+            formDataObject[field.name] = field.value;
+        });
+        var dataToSend = {
+            id: globalId,
+            DTO: formDataObject
+        };
+        console.log("recordForm: ", JSON.stringify(dataToSend));
+        $.ajax({
+            url: location.origin + '/User/ApiUpdate',
+            type: 'POST',
+            data: dataToSend,
+            success: function () {
+                $('#recordModal').modal('hide');
+                table.ajax.reload();
+                     Alerts.showSuccessMessage(action);
+            },
+            error: function (xhr, status, error) {
+                       Alerts.showErrorMessage(action);
+                console.error("Error: ", status, error);
+            }
+        });
+    });
+
+$('#saveNew').on('click', function () {
+     var action = 'add';
+        var formDataArray = $('#recordForm').serializeArray();
+        var formDataObject = {};
+        $.each(formDataArray, function (index, field) {
+            formDataObject[field.name] = field.value;
+        });
+ 
+            $.ajax({
+            type: 'POST',
+            url: location.origin + '/User/ApiAdd',
+            data: {DTO:formDataObject},
+            success: function () {
+                $('#recordModal').modal('hide');
+                table.ajax.reload();
+                     Alerts.showSuccessMessage(action);
+            },
+            error: function (xhr, status, error) {
+                       Alerts.showErrorMessage(action);
+                console.error("Error: ", status, error);
+            }
+        });
+        
+  });
+
+$(document).on('click', '.view-btn', function () {
+    var id = $(this).data('id');
+    globalId= id;
+    GenricFunctions.loadRecordData('view', id,'/User/ApiGetById');
+});
+
+$(document).on('click', '.add-new', function () {
+    var id = 0;
+    globalId=0;
+    GenricFunctions.loadRecordData('add', id,'/User/ApiGetById');
+});
+
+$(document).on('click', '.edit-btn', function () {
+    var id = $(this).data('id');
+    globalId = id;
+    GenricFunctions.loadRecordData('edit', id,'/User/ApiGetById');
+});
+
+$(document).on('click', '.delete-btn', function () {
+    var id = $(this).data('id');
+     GenricFunctions.confirmDelete('/User/ApiDelete',id,table);
+});
+
+});
+ </script>
+}

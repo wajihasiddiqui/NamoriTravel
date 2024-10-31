@@ -1,0 +1,260 @@
+﻿@using NamoriTravel.Authorize
+@{
+    ViewData["Title"] = "Index";
+    var pagePermissions = ViewBag.PagePermissions as Dictionary<string, List<string>>;
+    var hasCreatePermission = PermissionHelper.HasPermission(pagePermissions, "City", "Create");
+    var hasEditPermission = PermissionHelper.HasPermission(pagePermissions, "City", "Update");
+    var hasDetailsPermission = PermissionHelper.HasPermission(pagePermissions, "City", "Read");
+    var hasDeletePermission = PermissionHelper.HasPermission(pagePermissions, "City", "Delete");
+}
+
+     <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-6">
+                        <h5 style="margin-top: 5px;">@ViewBag.TblTitle</h5>
+                    </div>
+                     @if (hasCreatePermission)
+            {
+                <div class="col-6 text-end">
+                    <button type="button" class="btn btn-info add-live">Add Live</button>
+                    <button type="button" class="btn btn-info add-new">Add New</button>
+                </div>
+            }
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="GirdView table">
+                </table>
+            </div>
+        </div>
+<!-- Modal -->
+<div class="modal fade" id="CityModal" tabindex="-1" aria-labelledby="CityModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="CityModalLabel">Select Country</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-8">
+                     <select id="countryDropdown" class="form-select mb-3" style="width: 115%;">
+                </select>
+                </div>
+                <div class="col-4 text-end">
+                <button type="button" id="getCitiesBtn" class="btn btn-primary mb-3" style="width: 100px;">View</button>
+                </div>
+                </div>
+                
+               
+                <ul id="CityListContainer" class="list-group">
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="saveChangesBtn">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+
+$(document).ready(function () 
+{
+    let globalId;
+    var table;
+    function DataTable() {
+       table = GenricFunctions.bindDatatable(
+            '.GirdView', '/City/ApiGetAll',
+            [
+                { data: "id", title: "Id", autoWidth: true, name: "Id", searchable: false, orderable: true },
+                { data: "name", title: "City Name", autoWidth: true, name: "Name", orderable: true },
+                { data: "code", title: "Code", autoWidth: true, name: "Code", orderable: true }
+            ],
+            "@hasDetailsPermission" == "True",
+            "@hasEditPermission" == "True",
+            "@hasDeletePermission" == "True"
+        );
+        applyTranslations();
+}
+
+DataTable();
+
+$('#saveChanges').on('click', function () {
+    var action = 'update';
+        var formDataArray = $('#recordForm').serializeArray();
+        var formDataObject = {};
+        $.each(formDataArray, function (index, field) {
+            formDataObject[field.name] = field.value;
+        });
+        var dataToSend = {
+            id: globalId,
+            DTO: formDataObject
+        };
+       
+        $.ajax({
+            url: location.origin + '/City/ApiUpdate',
+            type: 'POST',
+            data: dataToSend,
+            success: function () {
+                $('#recordModal').modal('hide');
+                table.ajax.reload();
+                Alerts.showSuccessMessage(action);
+            },
+            error: function (xhr, status, error) {
+                Alerts.showErrorMessage(action);
+                console.error("Error: ", status, error);
+            }
+        });
+    });
+
+$('#saveNew').on('click', function () {
+        var formDataArray = $('#recordForm').serializeArray();
+        var formDataObject = {};
+        $.each(formDataArray, function (index, field) {
+            formDataObject[field.name] = field.value;
+        });
+            var list;
+            $.ajax({
+            type: 'POST',
+            url: location.origin + '/City/ApiAdd',
+            data: {
+                  DTO: formDataObject,
+                  DTOlist: JSON.stringify(list)
+                },
+            success: function () {
+                $('#recordModal').modal('hide');
+                $('#CityModal').modal('hide');
+                table.ajax.reload();
+            },
+            error: function (xhr, status, error) {
+                console.error("Error: ", status, error);
+            }
+        });
+        
+  });
+
+$(document).on('click', '.view-btn', function () {
+    var id = $(this).data('id');
+    globalId= id;
+    GenricFunctions.loadRecordData('view', id,'/City/ApiGetById');
+});
+
+$(document).on('click', '.add-new', function () {
+    var id = 0;
+    globalId=0;
+    GenricFunctions.loadRecordData('add', id,'/City/ApiGetById');
+});
+
+$(document).on('click', '.edit-btn', function () {
+    var id = $(this).data('id');
+    globalId = id;
+    GenricFunctions.loadRecordData('edit', id,'/City/ApiGetById');
+});
+
+$(document).on('click', '.delete-btn', function () {
+    var id = $(this).data('id');
+    GenricFunctions.GenricFunctions.confirmDelete('/City/ApiDelete',id,table);
+});
+
+});
+var CityData;
+
+$(document).on('click', '.add-live', function () {
+        $.ajax({
+            type: "GET",
+            url: location.origin + '/Country/GetAllCountries', 
+            success: function (response) {
+                populateCountryDropdown(response.data);  
+                $('#CityModal').modal('show'); 
+            },
+            error: function (error) {
+                console.log('Error loading countries:', error);
+            }
+        });
+    });
+
+function populateCountryDropdown(countries) {
+        const countryDropdown = $('#countryDropdown');
+        countryDropdown.empty();
+        countryDropdown.append('<option value="">Select a Country</option>');
+
+        countries.forEach(function (country) {
+            countryDropdown.append(`<option value="${country.code}">${country.name}</option>`);
+        });
+        // $('#countryDropdown').select2({
+        //     placeholder: '--Select--',
+        //     allowClear: true
+        // });
+    }
+
+    $(document).on('click', '#getCitiesBtn', function () {
+        const selectedCountryCode = $('#countryDropdown').val();  
+
+        if (!selectedCountryCode) {
+            alert("Please select a country.");
+            return;
+        }
+
+        $.ajax({
+            type: "GET",
+            url: location.origin + '/City/GetLiveCities',
+            data: { countryCode: selectedCountryCode },  
+            success: function (response) {
+                loadCityList(response.data);  
+                CityData = response.data; 
+            },
+            error: function (error) {
+                console.log('Error loading cities:', error);
+            }
+        });
+    });
+
+    function loadCityList(CityData) {
+        const CityListContainer = $('#CityListContainer');
+        CityListContainer.empty(); 
+
+        CityData.forEach((city, index) => {
+            let CityItem = `
+                <li class="list-group-item d-flex justify-content-between align-items-center" data-id="${city.id}">
+                    ${city.name} (${city.code})
+                    <button type="button" class="btn btn-danger btn-sm remove-City-btn" data-index="${index}">X</button>
+                </li>
+            `;
+            CityListContainer.append(CityItem);
+        });
+    }
+
+    $(document).on('click', '.remove-City-btn', function () {
+        let CityIndex = $(this).data('index');
+        CityData.splice(CityIndex, 1);  
+        loadCityList(CityData); 
+    });
+
+    $('#saveChangesBtn').on('click', function () {
+        var dto = "";  
+
+        $.ajax({
+            type: 'POST',
+            url: location.origin + '/City/ApiAdd',
+            data: {
+                DTO: dto,
+                DTOlist: JSON.stringify(CityData)
+            },
+            success: function () {
+                $('#CityModal').modal('hide');
+                $('#CityListContainer').empty();
+                table.ajax.reload();
+            },
+            error: function (xhr, status, error) {
+                console.error("Error: ", status, error);
+            }
+        });
+    });
+
+
+</script>
+}

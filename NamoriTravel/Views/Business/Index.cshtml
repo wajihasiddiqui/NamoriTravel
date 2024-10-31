@@ -1,0 +1,220 @@
+﻿@using NamoriTravel.Authorize
+@{
+    ViewData["Title"] = "Index";
+    var pagePermissions = ViewBag.PagePermissions as Dictionary<string, List<string>>;
+    var hasCreatePermission = PermissionHelper.HasPermission(pagePermissions, "Business", "Create");
+    var hasEditPermission = PermissionHelper.HasPermission(pagePermissions, "Business", "Update");
+    var hasDetailsPermission = PermissionHelper.HasPermission(pagePermissions, "Business", "Read");
+    var hasDeletePermission = PermissionHelper.HasPermission(pagePermissions, "Business", "Delete");
+}
+
+     <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-6">
+                        <h5 style="margin-top: 5px;">@ViewBag.TblTitle</h5>
+                    </div>
+                     @if (hasCreatePermission)
+            {
+                <div class="col-6 text-end">
+                    <button type="button" class="btn btn-info add-live">Add Live</button>
+                    <button type="button" class="btn btn-info add-new">Add New</button>
+                </div>
+            }
+
+                </div>
+               
+               
+            </div>
+            <div class="card-body">
+                <table class="GirdView table">
+                  
+                </table>
+            </div>
+        </div>
+
+<!-- Modal -->
+<div class="modal fade" id="BusinessModal" tabindex="-1" aria-labelledby="BusinessModalLabel" aria-hidden="true" style="display:none">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="BusinessModalLabel">Business List</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul id="BusinessListContainer" class="list-group">
+                    <!-- Dynamic Business List -->
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="saveChangesBtn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+
+$(document).ready(function () 
+{
+    let globalId;
+    var table;
+    function DataTable() {
+       table = GenricFunctions.bindDatatable(
+            '.GirdView', '/Business/ApiGetAll',
+            [
+                { data: "id", title: "Id", autoWidth: true, name: "Id", searchable: false, orderable: true },
+                { data: "description", title: "Description", autoWidth: true, name: "Description", orderable: true },
+                { data: "value", title: "Value", autoWidth: true, name: "Value", orderable: true }
+            ],
+            "@hasDetailsPermission" == "True",
+            "@hasEditPermission" == "True",
+            "@hasDeletePermission" == "True"
+        );
+        applyTranslations();
+    }
+
+DataTable();
+
+$('#saveChanges').on('click', function () {
+    var action = 'update';
+        var formDataArray = $('#recordForm').serializeArray();
+        var formDataObject = {};
+        $.each(formDataArray, function (index, field) {
+            formDataObject[field.name] = field.value;
+        });
+        var dataToSend = {
+            id: globalId,
+            DTO: formDataObject
+        };
+        $.ajax({
+            url: location.origin + '/Business/ApiUpdate',
+            type: 'POST',
+            data: dataToSend,
+            success: function () {
+                $('#recordModal').modal('hide');
+                table.ajax.reload();
+                Alerts.showSuccessMessage(action);
+            },
+            error: function (xhr, status, error) {
+                Alerts.showErrorMessage(action);
+                console.error("Error: ", status, error);
+            }
+        });
+    });
+
+$('#saveNew').on('click', function () {
+        var formDataArray = $('#recordForm').serializeArray();
+        var formDataObject = {};
+        $.each(formDataArray, function (index, field) {
+            formDataObject[field.name] = field.value;
+        });
+            var list;
+            $.ajax({
+            type: 'POST',
+            url: location.origin + '/Business/ApiAdd',
+            data: {
+                  DTO: formDataObject,
+                  DTOlist: JSON.stringify(list)
+                },
+            success: function () {
+                $('#recordModal').modal('hide');
+                 $('#BusinessModal').modal('hide');
+                table.ajax.reload();
+            },
+            error: function (xhr, status, error) {
+                console.error("Error: ", status, error);
+            }
+        });
+        
+  });
+
+$(document).on('click', '.view-btn', function () {
+    var id = $(this).data('id');
+    globalId= id;
+    GenricFunctions.loadRecordData('view', id,'/Business/ApiGetById');
+});
+
+$(document).on('click', '.add-new', function () {
+    var id = 0;
+    globalId=0;
+    GenricFunctions.loadRecordData('add', id,'/Business/ApiGetById');
+});
+
+$(document).on('click', '.add-live', function () {
+   $.ajax({
+    type: "GET",
+    url: location.origin+ '/Business/GetLiveBusiness',
+    success: function (response) {
+        console.log('Countries load successfully'+response);
+        console.log('Countries load successfully'+response.data);
+        loadBusinessList(response.data);
+        BusinessData = response.data;
+    },
+    error: function (error) {
+        console.log('Error loading countries:', error);
+    }
+});
+});
+
+$(document).on('click', '.edit-btn', function () {
+    var id = $(this).data('id');
+    globalId = id;
+    GenricFunctions.loadRecordData('edit', id,'/Business/ApiGetById');
+});
+
+$(document).on('click', '.delete-btn', function () {
+    var id = $(this).data('id');
+    GenricFunctions.GenricFunctions.confirmDelete('/Business/ApiDelete',id,table);
+});
+
+});
+var BusinessData;
+
+function loadBusinessList(BusinessData) {
+    const BusinessListContainer = $('#BusinessListContainer');
+    BusinessListContainer.empty();  // Clear the existing list
+    BusinessData.forEach((Business, index) => {
+        let BusinessItem = `
+            <li class="list-group-item d-flex justify-content-between align-items-center" data-id="${Business.id}">
+                ${Business.description} (${Business.value})
+                <button type="button" class="btn btn-danger btn-sm remove-Business-btn" data-index="${index}">X</button>
+            </li>
+        `;
+        BusinessListContainer.append(BusinessItem);
+    });
+    $('#BusinessModal').modal('show');
+}
+
+$(document).on('click', '.remove-Business-btn', function () {
+    let BusinessIndex = $(this).data('index'); 
+    BusinessData.splice(BusinessIndex, 1);      
+    loadBusinessList(BusinessData);             
+});
+
+$('#saveChangesBtn').on('click', function () {
+   var dto="";
+            $.ajax({
+            type: 'POST',
+            url: location.origin + '/Business/ApiAdd',
+           data: {
+                  DTO: dto,
+                  DTOlist: JSON.stringify(BusinessData)
+                },
+            success: function () {
+                 $('#BusinessModal').modal('hide');
+                table.ajax.reload();
+            },
+            error: function (xhr, status, error) {
+                console.error("Error: ", status, error);
+            }
+        });
+});
+
+loadBusinessList(BusinessData);
+
+
+ </script>
+}

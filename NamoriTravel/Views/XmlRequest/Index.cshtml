@@ -1,0 +1,245 @@
+﻿@using NamoriTravel.Authorize
+@{
+    ViewData["Title"] = "XmlRequest";
+    var pagePermissions = ViewBag.PagePermissions as Dictionary<string, List<string>>;
+    var hasCreatePermission = PermissionHelper.HasPermission(pagePermissions, "XmlRequest", "Create");
+    var hasEditPermission = PermissionHelper.HasPermission(pagePermissions, "XmlRequest", "Update");
+    var hasDetailsPermission = PermissionHelper.HasPermission(pagePermissions, "XmlRequest", "Read");
+    var hasDeletePermission = PermissionHelper.HasPermission(pagePermissions, "XmlRequest", "Delete");
+}
+
+ <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-6">
+                        <h5 style="margin-top: 5px;">@ViewBag.TblTitle</h5>
+                    </div>
+                    <div class="col-6 "style="text-align: end;">
+
+                @if (hasCreatePermission)
+                {
+                                <button type="button" class="btn btn-info add-new">Add New</button>
+                }
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="card-body">
+                <table class="GirdView table">
+
+                </table>
+            </div>
+        </div>
+
+@section Scripts {
+        <script>
+
+    $(document).ready(function () 
+    {
+
+
+        let globalId;
+        var table;
+        function DataTable() {
+
+           table = GenricFunctions.bindDatatable(
+                '.GirdView', '/XmlRequest/ApiGetAll',
+                [
+                    { data: "id", title: "Id", autoWidth: true, name: "Id", searchable: false, orderable: true },
+                    { data: "requestType", title: "Request Type", autoWidth: true, name: "RequestType", orderable: true },
+                    { data: "requestXml", title: "Request Xml", autoWidth: true, orderable: true }
+                ],
+                "@hasDetailsPermission" == "True",
+                "@hasEditPermission" == "True",
+                "@hasDeletePermission" == "True"
+            );
+
+            applyTranslations();
+        }
+
+    DataTable();
+
+    $('#saveChanges').on('click', function () {
+        var action ='update';
+            var formDataArray = $('#recordForm').serializeArray();
+            var formDataObject = {};
+            $.each(formDataArray, function (index, field) {
+                formDataObject[field.name] = field.value;
+            });
+            var dataToSend = {
+                id: globalId,
+                DTO: formDataObject
+            };
+
+            $.ajax({
+                url: location.origin + '/XmlRequest/ApiUpdate',
+                type: 'POST',
+                data: dataToSend,
+                success: function () {
+                    $('#recordModal').modal('hide');
+                    table.ajax.reload();
+                    Alerts.showSuccessMessage(action);
+                },
+                error: function (xhr, status, error) {
+                       Alerts.showErrorMessage(action);
+                    console.error("Error: ", status, error);
+                }
+            });
+        });
+
+    $('#saveNew').on('click', function () {
+         var action = 'add';
+            var formDataArray = $('#recordForm').serializeArray();
+            var formDataObject = {};
+            $.each(formDataArray, function (index, field) {
+                formDataObject[field.name] = field.value;
+            });
+
+                $.ajax({
+                type: 'POST',
+                url: location.origin + '/XmlRequest/ApiAdd',
+                data: {DTO:formDataObject},
+                success: function () {
+                    $('#recordModal').modal('hide');
+                    table.ajax.reload();
+                     Alerts.showSuccessMessage(action);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error: ", status, error);
+                       Alerts.showErrorMessage(action);
+                }
+            });
+
+      });
+
+    $(document).on('click', '.view-btn', function () {
+        var id = $(this).data('id');
+        globalId= id;
+        loadRecordData('view', id,'/XmlRequest/ApiGetById');
+    });
+
+    $(document).on('click', '.add-new', function () {
+        var id = 0;
+        globalId=0;
+        loadRecordData('add', id,'/XmlRequest/ApiGetById');
+    });
+
+    $(document).on('click', '.edit-btn', function () {
+        var id = $(this).data('id');
+        globalId = id;
+        loadRecordData('edit', id,'/XmlRequest/ApiGetById');
+    });
+
+    $(document).on('click', '.delete-btn', function () {
+        var id = $(this).data('id');
+         GenricFunctions.confirmDelete('/XmlRequest/ApiDelete',id,table);
+    });
+
+
+    function loadRecordData(mode, id, Url) {
+        globalId = id;
+        $.ajax({
+            type: 'GET',
+            url: location.origin + Url,
+            data: { id: id },
+            beforeSend: function () {
+                $("#loadingIndicator").show(); // Example
+            },
+            success: function (response) {
+                $('#modalFields').empty();
+                const { data: Data , vtype: Vtype } = response;
+                for (const key in Data) {
+                    if (Object.prototype.hasOwnProperty.call(Data, key)) {
+                        const fieldHtml = generateFormField(key, Data[key],Vtype);
+                        $('#modalFields').append(fieldHtml);
+                    }
+                }
+
+                FormatText.ToggleModalMode(mode);
+                $('#recordModal').modal('show');
+            },
+            error: function (error) {
+                console.error("Error: ", error);
+                alert("Failed to load the record data."); 
+            },
+            complete: function () {
+                // Hide loading indicator
+                $("#loadingIndicator").hide(); // Example
+            }
+        });
+    }
+    function generateFormField(key, value, vtype) {
+    let inputType = 'text'; // Default input type
+    if (key.toLowerCase().includes('email')) {
+        inputType = 'email';
+    } else if (key.toLowerCase().includes('date')) {
+        inputType = 'date';
+    } else if (key.toLowerCase().includes('number') || key.toLowerCase().includes('id') || key.toLowerCase().includes('position') || ['id', 'createdby', 'modifiedby', 'updateby'].includes(key.toLowerCase())) {
+        inputType = 'number';
+    }
+
+    let isHiddenField = ['id', 'createdby', 'createddate', 'modifieddate', 'modifiedby', 'isactive', 'isdeleted'].includes(key.toLowerCase());
+    let fieldLabel = FormatText.LabelText(key);
+    
+    // Check if the key contains the word "date" and format the value if needed
+    if (key.toLowerCase().includes('date') && value) {
+        value = new Date(value).toISOString().split('T')[0];
+    }
+
+    if (key === "requestXml") {
+        return `
+            <div class="col-md-12 mb-3" ${isHiddenField ? 'style="display: none;"' : ''}>
+                <label for="${key}" class="form-label lang" Key="${fieldLabel}">${fieldLabel}</label>
+                <textarea class="form-control lang" Key="${fieldLabel}" placeholder="" id="${key}" name="${key}" rows="10">${value || ''}</textarea>
+            </div>
+        `;
+    } else {
+        return `
+            <div class="col-md-12 mb-3" ${isHiddenField ? 'style="display: none;"' : ''}>
+                <label for="${key}" class="form-label lang" Key="${fieldLabel}">${fieldLabel}</label>
+                <input type="${inputType}" class="form-control lang" Key="${fieldLabel}" placeholder="" id="${key}" name="${key}" value="${value || ''}">
+            </div>
+        `;
+    }
+}
+
+
+function generateFormField1(key, value,vtype) {
+            let inputType = 'text'; // Default input type
+            if (key.toLowerCase().includes('email')) {
+                inputType = 'email';
+            } else if (key.toLowerCase().includes('date')) {
+                inputType = 'date';
+            } else if (key.toLowerCase().includes('number') || key.toLowerCase().includes('id') || key.toLowerCase().includes('position') || ['id', 'createdby', 'modifiedby', 'updateby'].includes(key.toLowerCase())) {
+                inputType = 'number';
+            }
+
+            let isHiddenField = ['id', 'createdby', 'createddate', 'modifieddate', 'modifiedby', 'isactive', 'isdeleted'].includes(key.toLowerCase());
+            let fieldLabel = FormatText.LabelText(key);
+                // Check if the key contains the word "date" and format the value if needed
+            if (key.toLowerCase().includes('date') && value) {
+                    value = new Date(value).toISOString().split('T')[0];
+             }
+             if (key === "requestXml") {
+                       return `
+                           <div class="col-md-6 mb-3" ${isHiddenField ? 'style="display: none;"' : ''}>
+                               <label for="${key}" class="form-label lang" Key="${fieldLabel}">${fieldLabel}</label>
+                               <textarea class="form-control lang" Key="${fieldLabel}" placeholder="" id="${key}" name="${key}" rows="10">${value || ''}</textarea>
+                           </div>
+                       `;
+                   } else {
+                       return `
+                           <div class="col-md-6 mb-3" ${isHiddenField ? 'style="display: none;"' : ''}>
+                               <label for="${key}" class="form-label lang" Key="${fieldLabel}">${fieldLabel}</label>
+                               <input type="${inputType}" class="form-control lang" Key="${fieldLabel}" placeholder="" id="${key}" name="${key}" value="${value || ''}">
+                           </div>
+                       `;
+                   }
+        }
+
+
+    });
+
+     </script>
+}

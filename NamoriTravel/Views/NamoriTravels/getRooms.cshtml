@@ -1,0 +1,341 @@
+﻿@model NamoriTravel.Models.HotelDetail
+@{
+Layout = "~/Views/Shared/_Layout_Client.cshtml";
+    int pagesPerGroup = 10; // Number of pages per group
+    int currentGroup = (Model.CurrentPage - 1) / pagesPerGroup;
+    int totalGroups = (@Model.TotalPages + pagesPerGroup - 1) / pagesPerGroup; // Calculate total groups
+
+}
+<style>
+   .headerrow{
+   background-color:#13357b;
+   }
+   .btn-reserve{
+   background-color:#3554d1;
+   }
+   .y-gap-20 {
+    margin-top: -10px!important;
+     margin-bottom: -0px !important; 
+}
+</style>
+<div class="header-margin"></div>
+<div class="singleMenu js-singleMenu">
+   <div class="singleMenu__content">
+      <div class="container">
+         <div class="row y-gap-20 justify-between items-center">
+            <div class="col-auto">
+               <div class="singleMenu__links row x-gap-30 y-gap-10">
+                  <div class="col-auto">
+                     <a href="#overview">Overview</a>
+                  </div>
+                  <div class="col-auto">
+                     <a href="#rooms">Rooms</a>
+                  </div>
+               </div>
+            </div>
+            <div class="col-auto">
+               <div class="row x-gap-15 y-gap-15 items-center">
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+<section class="pt-40">
+   <div class="container">
+      <div class="row y-gap-20 justify-between items-end">
+         <div class="col-auto">
+            <div class="row x-gap-20  items-center">
+               <div class="col-auto">
+                  <h1 class="text-30 sm:text-25 fw-600">@Model.Hotel.HotelName</h1>
+               </div>
+            </div>
+            <div class="row x-gap-20 y-gap-20 items-center">
+               <div class="col-auto">
+                  <div class="d-flex items-center text-15 text-light-1">
+                     <i class="icon-location-2 text-16 mr-5"></i>
+                     @Model.Hotel.FullAddress.HotelStreetAddress, @Model.Hotel.FullAddress.HotelCity, @Model.Hotel.FullAddress.HotelCountry                            
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="galleryGrid -type-1 pt-30">
+         @foreach (var image in Model.Hotel.HotelImages.Take(4))
+         {
+         @if (image.Url.ToString().Contains("dotwconnect"))
+         {
+         <div class="galleryGrid__item relative d-flex">
+            <img src="@Html.Raw(image.Url)" alt="@Html.Raw(image.Category)" class="rounded-4"/>
+         </div>
+         }
+         else
+         {
+         <div class="galleryGrid__item relative d-flex">
+            <img src="~/dashboard/img/lists/hotel/1/3.png" alt="image" class="rounded-4"/>
+         </div>
+         }
+         }
+         <!-- Section to See All Photos -->
+         <div class="galleryGrid__item relative d-flex">
+            <img src="@Model.Hotel.HotelImages.FirstOrDefault()?.Url" alt="@Model.Hotel.HotelImages.FirstOrDefault()?.Category" class="rounded-4"/>
+            <div class="absolute px-10 py-10 col-12 h-full d-flex justify-end items-end">
+               <a href="@Model.Hotel.HotelImages.FirstOrDefault()?.Url"
+                  class="button -blue-1 px-24 py-15 bg-white text-dark-1 js-gallery"
+                  data-gallery="gallery2">
+               See All @Model.Hotel.HotelImages.Count Photos
+               </a>
+               <!-- Hidden Gallery Links -->
+               @foreach (var img in Model.Hotel.HotelImages)
+               {
+               @if(img.Url.ToString().Contains("dotwconnect")){
+               <a href="@Html.Raw(img.Url)" alt="@Html.Raw(img.Category)" class="js-gallery d-none" data-gallery="gallery2"></a>
+               }
+               else{
+               <a href="~/dashboard/img/lists/hotel/1/3.png" alt="@Html.Raw(img.Category)" class="js-gallery d-none" data-gallery="gallery2"></a>
+               }
+               }
+            </div>
+         </div>
+      </div>
+   </div>
+</section>
+<section class="pt-30">
+   <div class="container">
+      <div class="row y-gap-30">
+         <div class="col-xl-12">
+            <div class="row y-gap-40">
+               <div id="overview" class="col-12">
+                  <h3 class="text-22 fw-500 pt-40 border-top-light">Overview</h3>
+                  <!-- Short Description -->
+                  <p class="text-dark-1 text-15 mt-20" id="short-description">
+                     @Html.Raw(Model.Hotel.Description)
+                  </p>
+                  <!-- Full Description (Initially Hidden) -->
+                  <p class="text-dark-1 text-15 mt-20 d-none" id="full-description">
+                     @Html.Raw(Model.Hotel.Description2)
+                  </p>
+                  <!-- Toggle Link -->
+                  <a href="#" id="toggle-description" class="d-block text-14 text-blue-1 fw-500 underline mt-10">
+                  Show More
+                  </a>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</section>
+<section id="rooms" class="pt-30">
+   <div class="container">
+      <div class="row pb-20">
+         <div class="col-auto">
+            <h3 class="text-22 fw-500">Available Rooms</h3>
+         </div>
+      </div>
+      @foreach (var item in Model.Hotel.Rooms)
+      {
+      <div class="border-light rounded-4 px-30 py-30 sm:px-20 sm:py-20 mb-4" style="margin-top: 10px;margin-bottom: 15px;">
+         <div class="row g-4">
+            <div class="col-12">
+               <h3 class="text-18 fw-500 mb-15">@item.Name</h3>
+               <div class="roomGrid">
+                  <!-- Header Row -->
+                  <div class="row  headerrow text-center fw-bold  text-white py-2">
+                     <div class="col-2">Room Type</div>
+                     <div class="col-2">Sleeps</div>
+                     <div class="col-3">Room Info</div>
+                     <div class="col-3">Room Capacity Info</div>
+                     <div class="col-2">Select Rooms</div>
+                  </div>
+                  <!-- Content Rows -->
+                  <div class="row py-3 ">
+                     <!-- Amenities Column -->
+                     <!-- Amenities Column -->
+                     <div class="col-2">
+                        <div class="y-gap-5 mt-2">
+                           <!-- Initial 5 Amenities (Amenities2) -->
+                           <div class="amenities2-list">
+                              @if(Model.Hotel.Amenities is not null && Model.Hotel.Amenities.Count() > 0)
+                              {
+                              @foreach (var Ami in Model.Hotel.Amenities.Take(5))
+                              {
+                              <div class="d-flex">
+                                 <i class="bi bi-star-fill text-warning mr-2"></i>
+                                 <div class="text-15" id="@Ami.Id">@Ami.Item</div>
+                              </div>
+                              }
+                              }
+                           </div>
+                           <!-- All Amenities (Hidden Initially) -->
+                           <div class="all-amenities d-none">
+                              @if(Model.Hotel.Amenities2 is not null && Model.Hotel.Amenities2.Count() > 0)
+                              {
+                              @foreach (var Ami in Model.Hotel.Amenities2)
+                              {
+                              <div class="d-flex">
+                                 <i class="bi bi-star-fill text-warning mr-2"></i>
+                                 <div class="text-15" id="@Ami.Id" >@Ami.Item</div>
+                              </div>
+                              }
+                              }
+                           </div>
+                           <!-- Show More / Show Less Button -->
+                           <a href="#" class="show-more-toggle text-primary mt-2 d-block" data-visible="false">
+                           Show More
+                           </a>
+                        </div>
+                     </div>
+                     <!-- Sleeps Column -->
+                     <div class="col-2">
+                        <div class="d-flex items-center text-light-1">
+                           <i class="icon-man text-24"></i>
+                           <i class="icon-man text-24"></i>
+                        </div>
+                     </div>
+                     <!-- Room Info Column -->
+                     <div class="col-3">
+                        <div class="text-18 lh-15 fw-500">Max Adult: @item.RoomInfo.MaxAdult</div>
+                        <div class="text-18 lh-15 fw-500">Max Children: @item.RoomInfo.MaxChildren</div>
+                        <div class="text-18 lh-15 fw-500">Max Extra Bed: @item.RoomInfo.MaxExtraBed</div>
+                     </div>
+                     <!-- Room Capacity Info Column -->
+                     <div class="col-3">
+                        <div class="text-18 lh-15 fw-500">Adults Without Children: @item.RoomCapacityInfo.AllowedAdultsWithoutChildren</div>
+                        <div class="text-18 lh-15 fw-500">Adults With Children: @item.RoomCapacityInfo.AllowedAdultsWithChildren</div>
+                        <div class="text-18 lh-15 fw-500">Room Max Capacity: @item.RoomCapacityInfo.RoomPaxCapacity</div>
+                        <div class="text-18 lh-15 fw-500">Max Extra Bed: @item.RoomCapacityInfo.MaxExtraBed</div>
+                     </div>
+                     <!-- Select Rooms Column -->
+                     <div class="col-2 ">
+                        <div class="text-14 lh-1">3 rooms for</div>
+                        <div class="text-22 fw-500 lh-17 mt-5">US$72</div>
+                        <a href="#" id="@item.RoomTypeCode" data-Hotel-Id="@Model.Hotel.HotelId" data-room-Id="@item.RoomTypeCode" class="button h-50 px-24 -dark-1 bg-blue-1 text-white mt-10">
+                        Reserve <i class="icon-arrow-top-right ml-15"></i>
+                        </a>
+                        <div class="text-15 fw-500 mt-3">You'll be taken to the next step</div>
+                        <ul class="list-unstyled pt-2">
+                           <li class="text-14">Confirmation is immediate</li>
+                           <li class="text-14">No registration required</li>
+                           <li class="text-14">No booking or credit card fees!</li>
+                        </ul>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      }
+   </div>
+</section>
+
+<div class="border-top-light mt-30 pt-30">
+    <div class="row x-gap-10 y-gap-20 justify-center md:justify-center">
+        
+        @* Previous Group Button *@
+        @if (currentGroup > 0)
+        {
+            <div class="col-auto md:order-1">
+                <button class="button -blue-1 size-40 rounded-full border-light">
+                    <a href="@Url.Action("GetRooms", new { HotelId = Model.Hotel.HotelId, page = (currentGroup - 1) * pagesPerGroup + 1 })"
+                       class="icon-chevron-left text-12"></a>
+                </button>
+            </div>
+        }
+
+        @* Page Numbers for the Current Group *@
+        <div class="col-md-auto md:order-3">
+            <div class="row x-gap-20 y-gap-20 items-center md:d-none">
+                @{
+                    int startPage = currentGroup * pagesPerGroup + 1;
+                    int endPage = Math.Min(startPage + pagesPerGroup - 1, Model.TotalPages);
+
+                    for (int i = startPage; i <= endPage; i++)
+                    {
+                        <div class="col-auto">
+                            <a href="@Url.Action("GetRooms", new { HotelId = Model.Hotel.HotelId, page = i })"
+                               class="size-40 flex-center rounded-full @(i == Model.CurrentPage ? "bg-dark-1 text-white" : "bg-light-2")">
+                                @i
+                            </a>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        @* Next Group Button *@
+        @if (currentGroup < totalGroups - 1)
+        {
+            <div class="col-auto md:order-2">
+                <button class="button -blue-1 size-40 rounded-full border-light">
+                    <a href="@Url.Action("GetRooms", new { HotelId = Model.Hotel.HotelId, page = ((currentGroup + 1) * pagesPerGroup + 1) })"
+                       class="icon-chevron-right text-12"></a>
+                </button>
+            </div>
+        }
+
+    </div>
+</div>
+<script>
+   document.addEventListener("DOMContentLoaded", function () {
+       
+   const toggleLink = document.getElementById('toggle-description');
+   const shortDescription = document.getElementById('short-description');
+   const fullDescription = document.getElementById('full-description');
+   
+   // Check if all elements exist
+   if (toggleLink && shortDescription && fullDescription) {
+       toggleLink.addEventListener('click', function (event) {
+           event.preventDefault(); // Prevent page refresh on link click
+   
+           if (fullDescription.classList.contains('d-none')) {
+               // Show full description
+               fullDescription.classList.remove('d-none');
+               shortDescription.classList.add('d-none');
+               toggleLink.textContent = 'Show Less';
+           } else {
+               // Show short description
+               fullDescription.classList.add('d-none');
+               shortDescription.classList.remove('d-none');
+               toggleLink.textContent = 'Show More';
+           }
+       });
+   }
+   //-----------Amenities------------//
+    // Select all the show-more buttons for each hotel room
+   const toggleButtons = document.querySelectorAll('.show-more-toggle');
+   
+   toggleButtons.forEach(function (toggleButton) {
+   toggleButton.addEventListener('click', function (event) {
+     event.preventDefault();
+   
+     // Find the parent container (specific hotel card) for this button
+     const hotelCard = toggleButton.closest('.border-light');
+   
+     // Find amenities lists within this specific hotel card
+     const amenities2List = hotelCard.querySelector('.amenities2-list');
+     const allAmenities = hotelCard.querySelector('.all-amenities');
+   
+     // Toggle visibility
+     const isVisible = toggleButton.getAttribute('data-visible') === 'true';
+   
+     if (isVisible) {
+       // Show only the initial 5 amenities (Amenities2)
+       amenities2List.classList.remove('d-none');
+       allAmenities.classList.add('d-none');
+       toggleButton.textContent = 'Show More';
+     } else {
+       // Show all amenities and hide initial 5
+       amenities2List.classList.add('d-none');
+       allAmenities.classList.remove('d-none');
+       toggleButton.textContent = 'Show Less';
+     }
+   
+     // Update the button's state
+     toggleButton.setAttribute('data-visible', !isVisible);
+   });
+   });
+   
+   
+   });
+   //---------------------Room Pagination------------------//
+</script>

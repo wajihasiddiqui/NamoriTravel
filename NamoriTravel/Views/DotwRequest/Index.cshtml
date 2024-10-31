@@ -1,0 +1,219 @@
+﻿@using NamoriTravel.Authorize
+@{
+    ViewData["Title"] = "DotwRequest";
+    var pagePermissions = ViewBag.PagePermissions as Dictionary<string, List<string>>;
+    var hasCreatePermission = PermissionHelper.HasPermission(pagePermissions, "DotwRequest", "Create");
+    var hasEditPermission = PermissionHelper.HasPermission(pagePermissions, "DotwRequest", "Update");
+    var hasDetailsPermission = PermissionHelper.HasPermission(pagePermissions, "DotwRequest", "Read");
+    var hasDeletePermission = PermissionHelper.HasPermission(pagePermissions, "DotwRequest", "Delete");
+}
+
+ <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-6">
+                        <h5 style="margin-top: 5px;">@ViewBag.TblTitle</h5>
+                    </div>
+                    <div class="col-6 "style="text-align: end;">
+
+                @if (hasCreatePermission)
+                {
+                                <button type="button" class="btn btn-info add-new">Add New</button>
+                }
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="card-body">
+                <table class="GirdView table">
+
+                </table>
+            </div>
+        </div>
+
+@section Scripts {
+        <script>
+    $(document).ready(function () 
+    {
+        let globalId;
+        var table;
+        function DataTable() {
+
+           table = GenricFunctions.bindDatatable(
+                '.GirdView', '/DotwRequest/ApiGetAll',
+                [
+                    { data: "id", title: "Id", autoWidth: true, name: "Id", searchable: false, orderable: true },
+                    { data: "username", title: "User Name", autoWidth: true, name: "Username", orderable: true },
+                    { data: "source", title: "Source", autoWidth: true,  orderable: true },
+                    { data: "product", title: "Product", autoWidth: true,  orderable: true }
+                ],
+                "@hasDetailsPermission" == "True",
+                "@hasEditPermission" == "True",
+                "@hasDeletePermission" == "True"
+            );
+
+            applyTranslations();
+        }
+
+    DataTable();
+
+   $('#saveChanges').on('click', function () {
+        var action ='update';
+            var formDataArray = $('#recordForm').serializeArray();
+            var formDataObject = {};
+            $.each(formDataArray, function (index, field) {
+                formDataObject[field.name] = field.value;
+            });
+            var dataToSend = {
+                id: globalId,
+                DTO: formDataObject
+            };
+
+            $.ajax({
+                url: location.origin + '/DotwRequest/ApiUpdate',
+                type: 'POST',
+                data: dataToSend,
+                success: function () {
+                    $('#recordModal').modal('hide');
+                    table.ajax.reload();
+                    Alerts.showSuccessMessage(action);
+                },
+                error: function (xhr, status, error) {
+                       Alerts.showErrorMessage(action);
+                    console.error("Error: ", status, error);
+                }
+            });
+        });
+
+    $('#saveNew').on('click', function () {
+         var action = 'add';
+            var formDataArray = $('#recordForm').serializeArray();
+            var formDataObject = {};
+            $.each(formDataArray, function (index, field) {
+                formDataObject[field.name] = field.value;
+            });
+
+                $.ajax({
+                type: 'POST',
+                url: location.origin + '/DotwRequest/ApiAdd',
+                data: {DTO:formDataObject},
+                success: function () {
+                    $('#recordModal').modal('hide');
+                    table.ajax.reload();
+                     Alerts.showSuccessMessage(action);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error: ", status, error);
+                       Alerts.showErrorMessage(action);
+                }
+            });
+
+      });
+
+    $(document).on('click', '.view-btn', function () {
+        var id = $(this).data('id');
+        globalId= id;
+        loadRecordData('view', id,'/DotwRequest/ApiGetById');
+    });
+
+    $(document).on('click', '.add-new', function () {
+        var id = 0;
+        globalId=0;
+        loadRecordData('add', id,'/DotwRequest/ApiGetById');
+    });
+
+    $(document).on('click', '.edit-btn', function () {
+        var id = $(this).data('id');
+        globalId = id;
+        loadRecordData('edit', id,'/DotwRequest/ApiGetById');
+    });
+
+    $(document).on('click', '.delete-btn', function () {
+        var id = $(this).data('id');
+         GenricFunctions.confirmDelete('/DotwRequest/ApiDelete',id,table);
+    });
+
+
+    function loadRecordData(mode, id, Url) {
+        globalId = id;
+        $.ajax({
+            type: 'GET',
+            url: location.origin + Url,
+            data: { id: id },
+            beforeSend: function () {
+                $("#loadingIndicator").show(); // Example
+            },
+            success: function (response) {
+                $('#modalFields').empty();
+                const { data: Data , vtype: Vtype } = response;
+                for (const key in Data) {
+                    if (Object.prototype.hasOwnProperty.call(Data, key)) {
+                        const fieldHtml = generateFormField(key, Data[key],Vtype);
+                        $('#modalFields').append(fieldHtml);
+                    }
+                }
+
+                FormatText.ToggleModalMode(mode);
+                $('#recordModal').modal('show');
+            },
+            error: function (error) {
+                console.error("Error: ", error);
+                alert("Failed to load the record data."); 
+            },
+            complete: function () {
+                // Hide loading indicator
+                $("#loadingIndicator").hide(); // Example
+            }
+        });
+    }
+        function generateFormField(key, value,vtype) {
+            let inputType = 'text'; // Default input type
+            if (key.toLowerCase().includes('email')) {
+                inputType = 'email';
+            } else if (key.toLowerCase().includes('date')) {
+                inputType = 'date';
+            } else if (key.toLowerCase().includes('number') || key.toLowerCase().includes('id') || key.toLowerCase().includes('position') || ['id', 'createdby', 'modifiedby', 'updateby'].includes(key.toLowerCase())) {
+                inputType = 'number';
+            }
+
+             if (key === "visitorType") {
+                let dropdown = `<select class="form-select lang" Key="${key}" id="ddl${key}" name="${key}">`;
+                if (value === 0) {
+                    dropdown += `<option value="0" selected class="lang" Key="ddlSelect">--Select--</option>`;
+                } else {
+                    dropdown += `<option value="0"  class="lang" Key="ddlSelect">--Select--</option>`;
+                }
+                vtype.forEach(rowData => {
+                    let selected = rowData.id === value ? 'selected' : '';
+                    dropdown += `<option value="${rowData.id}" ${selected} class="lang" Key="${rowData.typeName}">${rowData.typeName}</option>`;
+                });
+                dropdown += `</select>`;
+                var Lable = FormatText.LabelText(key);
+                return `
+                <div class="col-md-6 mb-3">
+                    <label for="${key}" class="form-label lang" Key="${Lable}">${Lable}</label>
+                    ${dropdown}
+                </div>
+            `;
+            }
+                let isHiddenField = ['id','companyId', 'createdby', 'createddate', 'modifieddate', 'modifiedby', 'isactive', 'isdeleted'].includes(key.toLowerCase());
+                let fieldLabel = FormatText.LabelText(key);
+                // Check if the key contains the word "date" and format the value if needed
+                if (key.toLowerCase().includes('date') && value) {
+                    value = new Date(value).toISOString().split('T')[0];
+                }
+                return `
+                <div class="col-md-6 mb-3" ${isHiddenField ? 'style="display: none;"' : ''}>
+                    <label for="${key}" class="form-label lang" Key="${fieldLabel}">${fieldLabel}</label>
+                    <input type="${inputType}" class="form-control lang" Key="${fieldLabel}" placeholder="" id="${key}" name="${key}" value="${value || ''}">
+                </div>
+            `;
+
+        }
+
+
+    });
+
+     </script>
+}

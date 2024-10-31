@@ -1,0 +1,24 @@
+﻿@model IEnumerable<NamoriTravel.ModelsDTO.MenuItem>
+
+@foreach (var item in Model)
+{
+    <div class="sidebar__item @(item.Children.Any() ? "has-treeview" : "")">
+        <div class="sidebar__button @(item.Children.Any() ? "-has-children" : "")">
+            <a asp-controller="@item.Name" asp-action="Index" class="d-flex items-center text-15 lh-1 fw-500">
+                <img src="~/dashboard/img/dashboard/sidebar/@item.Iconsvg" alt="image" class="mr-15">
+                @item.Name
+                @if (item.Children.Any())
+                {
+                    <i class="fas fa-angle-left right"></i>
+                }
+            </a>
+        </div>
+
+        @if (item.Children.Any())
+        {
+            <div class="sidebar__subitems">
+                @await Html.PartialAsync("PartialViews/_MenuItem", item.Children)
+            </div>
+        }
+    </div>
+}

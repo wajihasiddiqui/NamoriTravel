@@ -1,0 +1,12 @@
+D:\Sindhi_Developer\Namori_Travel_V1\NamoriTravel\ModelsDTO\bin\Release\net8.0\ModelsDTO.deps.json
+D:\Sindhi_Developer\Namori_Travel_V1\NamoriTravel\ModelsDTO\bin\Release\net8.0\ModelsDTO.dll
+D:\Sindhi_Developer\Namori_Travel_V1\NamoriTravel\ModelsDTO\bin\Release\net8.0\ModelsDTO.pdb
+D:\Sindhi_Developer\Namori_Travel_V1\NamoriTravel\ModelsDTO\obj\Release\net8.0\ModelsDTO.GeneratedMSBuildEditorConfig.editorconfig
+D:\Sindhi_Developer\Namori_Travel_V1\NamoriTravel\ModelsDTO\obj\Release\net8.0\ModelsDTO.AssemblyInfoInputs.cache
+D:\Sindhi_Developer\Namori_Travel_V1\NamoriTravel\ModelsDTO\obj\Release\net8.0\ModelsDTO.AssemblyInfo.cs
+D:\Sindhi_Developer\Namori_Travel_V1\NamoriTravel\ModelsDTO\obj\Release\net8.0\ModelsDTO.csproj.CoreCompileInputs.cache
+D:\Sindhi_Developer\Namori_Travel_V1\NamoriTravel\ModelsDTO\obj\Release\net8.0\ModelsDTO.sourcelink.json
+D:\Sindhi_Developer\Namori_Travel_V1\NamoriTravel\ModelsDTO\obj\Release\net8.0\ModelsDTO.dll
+D:\Sindhi_Developer\Namori_Travel_V1\NamoriTravel\ModelsDTO\obj\Release\net8.0\refint\ModelsDTO.dll
+D:\Sindhi_Developer\Namori_Travel_V1\NamoriTravel\ModelsDTO\obj\Release\net8.0\ModelsDTO.pdb
+D:\Sindhi_Developer\Namori_Travel_V1\NamoriTravel\ModelsDTO\obj\Release\net8.0\ref\ModelsDTO.dll

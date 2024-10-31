@@ -1,0 +1,221 @@
+﻿@using NamoriTravel.Authorize
+@{
+
+    ViewData["Title"] = "Index";
+    var pagePermissions = ViewBag.PagePermissions as Dictionary<string, List<string>>;
+    var hasCreatePermission = PermissionHelper.HasPermission(pagePermissions, "Currency", "Create");
+    var hasEditPermission = PermissionHelper.HasPermission(pagePermissions, "Currency", "Update");
+    var hasDetailsPermission = PermissionHelper.HasPermission(pagePermissions, "Currency", "Read");
+    var hasDeletePermission = PermissionHelper.HasPermission(pagePermissions, "Currency", "Delete");
+}
+
+     <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-6">
+                        <h5 style="margin-top: 5px;">@ViewBag.TblTitle</h5>
+                    </div>
+                     @if (hasCreatePermission)
+            {
+                <div class="col-6 text-end">
+                    <button type="button" class="btn btn-info add-live">Add Live</button>
+                    <button type="button" class="btn btn-info add-new">Add New</button>
+                </div>
+            }
+
+                </div>
+               
+               
+            </div>
+            <div class="card-body">
+                <table class="GirdView table">
+                  
+                </table>
+            </div>
+        </div>
+
+<!-- Modal -->
+<div class="modal fade" id="CurrencyModal" tabindex="-1" aria-labelledby="CurrencyModalLabel" aria-hidden="true" style="display:none">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="CurrencyModalLabel">Currency List</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul id="CurrencyListContainer" class="list-group">
+                    <!-- Dynamic Currency List -->
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="saveChangesBtn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+
+$(document).ready(function () 
+{
+    let globalId;
+    var table;
+    function DataTable() {
+       table = GenricFunctions.bindDatatable(
+            '.GirdView', '/Currency/ApiGetAll',
+            [
+                { data: "id", title: "Id", autoWidth: true, name: "Id", searchable: false, orderable: true },
+                { data: "description", title: "Description", autoWidth: true, name: "Description", orderable: true },
+                { data: "shortcut", title: "Shortcut", autoWidth: true, name: "Shortcut", orderable: true }
+            ],
+            "@hasDetailsPermission" == "True",
+            "@hasEditPermission" == "True",
+            "@hasDeletePermission" == "True"
+        );
+        applyTranslations();
+    }
+
+DataTable();
+
+$('#saveChanges').on('click', function () {
+    var action = 'update';
+        var formDataArray = $('#recordForm').serializeArray();
+        var formDataObject = {};
+        $.each(formDataArray, function (index, field) {
+            formDataObject[field.name] = field.value;
+        });
+        var dataToSend = {
+            id: globalId,
+            DTO: formDataObject
+        };
+        $.ajax({
+            url: location.origin + '/Currency/ApiUpdate',
+            type: 'POST',
+            data: dataToSend,
+            success: function () {
+                $('#recordModal').modal('hide');
+                table.ajax.reload();
+                Alerts.showSuccessMessage(action);
+            },
+            error: function (xhr, status, error) {
+                Alerts.showErrorMessage(action);
+                console.error("Error: ", status, error);
+            }
+        });
+    });
+
+$('#saveNew').on('click', function () {
+        var formDataArray = $('#recordForm').serializeArray();
+        var formDataObject = {};
+        $.each(formDataArray, function (index, field) {
+            formDataObject[field.name] = field.value;
+        });
+            var list;
+            $.ajax({
+            type: 'POST',
+            url: location.origin + '/Currency/ApiAdd',
+            data: {
+                  DTO: formDataObject,
+                  DTOlist: JSON.stringify(list)
+                },
+            success: function () {
+                $('#recordModal').modal('hide');
+                 $('#CurrencyModal').modal('hide');
+                table.ajax.reload();
+            },
+            error: function (xhr, status, error) {
+                console.error("Error: ", status, error);
+            }
+        });
+        
+  });
+
+$(document).on('click', '.view-btn', function () {
+    var id = $(this).data('id');
+    globalId= id;
+    GenricFunctions.loadRecordData('view', id,'/Currency/ApiGetById');
+});
+
+$(document).on('click', '.add-new', function () {
+    var id = 0;
+    globalId=0;
+    GenricFunctions.loadRecordData('add', id,'/Currency/ApiGetById');
+});
+
+$(document).on('click', '.add-live', function () {
+   $.ajax({
+    type: "GET",
+    url: location.origin+ '/Currency/GetLiveCurrency',
+    success: function (response) {
+        console.log('Countries load successfully'+response);
+        console.log('Countries load successfully'+response.data);
+        loadCurrencyList(response.data);
+        CurrencyData = response.data;
+    },
+    error: function (error) {
+        console.log('Error loading countries:', error);
+    }
+});
+});
+
+$(document).on('click', '.edit-btn', function () {
+    var id = $(this).data('id');
+    globalId = id;
+    GenricFunctions.loadRecordData('edit', id,'/Currency/ApiGetById');
+});
+
+$(document).on('click', '.delete-btn', function () {
+    var id = $(this).data('id');
+    GenricFunctions.GenricFunctions.confirmDelete('/Currency/ApiDelete',id,table);
+});
+
+});
+var CurrencyData;
+
+function loadCurrencyList(CurrencyData) {
+    const CurrencyListContainer = $('#CurrencyListContainer');
+    CurrencyListContainer.empty();  // Clear the existing list
+    CurrencyData.forEach((Currency, index) => {
+        let CurrencyItem = `
+            <li class="list-group-item d-flex justify-content-between align-items-center" data-id="${Currency.id}">
+                ${Currency.description} (${Currency.value})
+                <button type="button" class="btn btn-danger btn-sm remove-Currency-btn" data-index="${index}">X</button>
+            </li>
+        `;
+        CurrencyListContainer.append(CurrencyItem);
+    });
+    $('#CurrencyModal').modal('show');
+}
+
+$(document).on('click', '.remove-Currency-btn', function () {
+    let CurrencyIndex = $(this).data('index'); 
+    CurrencyData.splice(CurrencyIndex, 1);      
+    loadCurrencyList(CurrencyData);             
+});
+
+$('#saveChangesBtn').on('click', function () {
+   var dto="";
+            $.ajax({
+            type: 'POST',
+            url: location.origin + '/Currency/ApiAdd',
+           data: {
+                  DTO: dto,
+                  DTOlist: JSON.stringify(CurrencyData)
+                },
+            success: function () {
+                 $('#CurrencyModal').modal('hide');
+                table.ajax.reload();
+            },
+            error: function (xhr, status, error) {
+                console.error("Error: ", status, error);
+            }
+        });
+});
+
+loadCurrencyList(CurrencyData);
+
+
+ </script>
+}

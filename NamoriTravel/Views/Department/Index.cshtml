@@ -1,0 +1,226 @@
+﻿@using NamoriTravel.Authorize
+@model IEnumerable<NamoriTravel.Models.DepartmentViewModel>
+
+@{
+    ViewData["Title"] = "Departments";
+    var pagePermissions = ViewBag.PagePermissions as Dictionary<string, List<string>>;
+    var hasCreatePermission = PermissionHelper.HasPermission(pagePermissions, "Department", "Create");
+    var hasEditPermission = PermissionHelper.HasPermission(pagePermissions, "Department", "Update");
+    var hasDetailsPermission = PermissionHelper.HasPermission(pagePermissions, "Department", "Read");
+    var hasDeletePermission = PermissionHelper.HasPermission(pagePermissions, "Department", "Delete");
+}
+
+         <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-6">
+                        <h5 style="margin-top: 5px;">@ViewBag.TblTitle</h5>
+                    </div>
+                    <div class="col-6 " style="text-align: end;">
+                            
+                             @if (hasCreatePermission)
+                        {
+                            <button type="button" class="btn btn-info add-new">Add New</button>
+                        }
+                    </div>
+                </div>
+               
+               
+            </div>
+            <div class="card-body">
+                <table class="GirdView table">
+                  
+                </table>
+            </div>
+        </div>
+
+
+@section Scripts{
+    <script>
+
+$(document).ready(function () 
+{
+    let globalId;
+    var table;
+    function DataTable() {
+        $("#cover-spin").show();
+       table = GenricFunctions.bindDatatable(
+            '.GirdView', '/Department/ApiGetAll',
+            [
+                { data: "id", title: "Id", autoWidth: true, name: "Id", searchable: false, orderable: true },
+                { data: "departmentName", title: "Department Name", autoWidth: true, name: "DepartmentName", orderable: true },
+            ],
+            "@hasDetailsPermission" == "True",
+            "@hasEditPermission" == "True",
+            "@hasDeletePermission" == "True"
+        );
+        $("#cover-spin").hide();
+        applyTranslations();
+    }
+
+DataTable();
+
+$('#saveChanges').on('click', function () {
+     var action = 'update';
+        var formDataArray = $('#recordForm').serializeArray();
+        var formDataObject = {};
+        $.each(formDataArray, function (index, field) {
+            formDataObject[field.name] = field.value;
+        });
+        var dataToSend = {
+            id: globalId,
+            DTO: formDataObject
+        };
+        $.ajax({
+            url: location.origin + '/Department/ApiUpdate',
+            type: 'POST',
+            data: dataToSend,
+            success: function () {
+                $('#recordModal').modal('hide');
+                table.ajax.reload();
+                  Alerts.showSuccessMessage(action);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error: ", status, error);
+                  Alerts.showSuccessMessage(action);
+            }
+        });
+    });
+
+$('#saveNew').on('click', function () {
+     var action = 'add';
+        var formDataArray = $('#recordForm').serializeArray();
+        var formDataObject = {};
+        $.each(formDataArray, function (index, field) {
+            formDataObject[field.name] = field.value;
+        });
+        console.log("recordForm: ", JSON.stringify(dataToSend));
+            $.ajax({
+            type: 'POST',
+            url: location.origin + '/Department/ApiAdd',
+            data: {DTO:formDataObject},
+            success: function () {
+                $('#recordModal').modal('hide');
+                table.ajax.reload();
+                  Alerts.showSuccessMessage(action);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error: ", status, error);
+                   Alerts.showErrorMessage(action);
+            }
+        });
+        
+  });
+
+$(document).on('click', '.view-btn', function () {
+    var id = $(this).data('id');
+    globalId= id;
+    loadRecordData('view', id,'/Department/ApiGetById');
+});
+
+$(document).on('click', '.add-new', function () {
+    var id = 0;
+    globalId=0;
+    loadRecordData('add', id,'/Department/ApiGetById');
+});
+
+$(document).on('click', '.edit-btn', function () {
+    var id = $(this).data('id');
+    globalId = id;
+    loadRecordData('edit', id,'/Department/ApiGetById');
+});
+
+$(document).on('click', '.delete-btn', function () {
+    var id = $(this).data('id');
+    GenricFunctions.confirmDelete('/Department/ApiDelete',id,table);
+});
+ 
+
+function loadRecordData(mode, id, Url) {
+        globalId = id;
+        $.ajax({
+            type: 'GET',
+            url: location.origin + Url,
+            data: { "id": id },
+            beforeSend: function () {
+                $("#cover-spin").show();
+            },
+            success: function (response) {
+                $('#modalFields').empty();
+                let Data = response.data;
+                let allData = response.allData;
+
+                for (var key in Data) {
+                    if (Data.hasOwnProperty(key)) {
+                        let fieldHtml = generateFormField(key, Data[key], allData);
+                        $('#modalFields').append(fieldHtml);
+                    }
+                }
+
+                FormatText.ToggleModalMode(mode);
+                $('#recordModal').modal('show');
+            },
+            error: function (error) {
+                console.log("Error: ", error);
+            },
+            complete: function () {
+                 $("#cover-spin").Hide();
+            }
+        });
+
+    }
+
+
+     function generateFormField (key, value, AllData) {
+        let inputType = 'text'; // Default input type
+
+        // Define input types based on the key
+        if (key.toLowerCase().includes('email')) {
+            inputType = 'email';
+        } else if (key.toLowerCase().includes('password')) {
+            inputType = 'password';
+        } else if (key.toLowerCase().includes('date')) {
+            inputType = 'date';
+        } else if (key.toLowerCase().includes('number') || key.toLowerCase().includes('id') || key.toLowerCase().includes('position') || ['id', 'createdby', 'modifiedby', 'updateby'].includes(key.toLowerCase())) {
+            inputType = 'number';
+        }
+
+        if (key === "parentPageId") {
+            let dropdown = `<select class="form-select lang" Key="${key}" id="ddl${key}" name="${key}">`;
+            if (value === 0) {
+                dropdown += `<option value="0" selected class="lang" Key="ddlSelect">--Select--</option>`;
+            } else {
+                dropdown += `<option value="0"  class="lang" Key="ddlSelect">--Select--</option>`;
+            }
+            AllData.forEach(rowData => {
+                let selected = rowData.id === value ? 'selected' : '';
+                dropdown += `<option value="${rowData.id}" ${selected} class="lang" Key="${rowData.departmentName}">${rowData.departmentName}</option>`;
+            });
+            dropdown += `</select>`;
+            var Lable = FormatText.LabelText(key);
+            return `
+            <div class="col-md-6 mb-3">
+                <label for="${key}" class="form-label lang" Key="${Lable}">${Lable}</label>
+                ${dropdown}
+            </div>
+        `;
+        } else {
+            let isHiddenField = ['id', 'createdby', 'createddate', 'modifieddate', 'modifiedby', 'isactive', 'isdeleted'].includes(key.toLowerCase());
+            let fieldLabel = FormatText.LabelText(key);
+            // Check if the key contains the word "date" and format the value if needed
+            if (key.toLowerCase().includes('date') && value) {
+                value = new Date(value).toISOString().split('T')[0];
+            }
+            return `
+            <div class="col-md-6 mb-3" ${isHiddenField ? 'style="display: none;"' : ''}>
+                <label for="${key}" class="form-label lang" Key="${fieldLabel}">${fieldLabel}</label>
+                <input type="${inputType}" class="form-control lang" Key="${fieldLabel}" placeholder="" id="${key}" name="${key}" value="${value || ''}">
+            </div>
+        `;
+        }
+    }
+
+});
+
+ </script>
+}

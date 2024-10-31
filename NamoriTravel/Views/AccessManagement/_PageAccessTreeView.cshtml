@@ -1,0 +1,109 @@
+﻿@model NamoriTravel.Models.AccessManagementViewModel
+
+@{
+    var userPagesWithPermissions = ViewBag.UserPagesWithPermissions as List<NamoriTravel.Models.PagePermissionsObjViewModel>;
+    var userPagesWithPermissionsDict = userPagesWithPermissions.GroupBy(p => p.PageId).ToDictionary(g => g.Key, g => g.ToList());
+}
+
+<div id="TreeViewContainer">
+    <ul>
+        <li>
+            <input type="checkbox" id="all_pages">
+            <label for="all_pages">All Pages</label>
+        </li>
+        @foreach (var page in Model.Pages)
+        {
+            <li>
+                <input type="checkbox" id="page_@(page.Id)" class="page-checkbox" />
+                <label for="page_@(page.Id)">@(page.PageName)</label>
+                <ul>
+                    @foreach (var permission in Model.Permissions)
+                    {
+                        var isAssigned = userPagesWithPermissionsDict.ContainsKey(page.Id) &&
+                                         userPagesWithPermissionsDict[page.Id].Any(p => p.PermissionId == permission.Id);
+
+                        <li data-permission-id="@permission.Id">
+                            <input type="checkbox" class="permission-checkbox" data-page-id="@(page.Id)" id="permission_@(permission.Id)" data-permission-name="@permission.PermissionName" name="permissions" value="@permission.Id" @(isAssigned ? "checked" : "") />
+                            <label for="permission_@(permission.Id)">@permission.PermissionName</label>
+                        </li>
+                    }
+                </ul>
+            </li>
+        }
+    </ul>
+    <button id="submitPermissions">Submit Permissions</button>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Select/Deselect all pages and their permissions
+        $('#all_pages').change(function () {
+            var isChecked = $(this).is(':checked');
+            $('.page-checkbox, .permission-checkbox').prop('checked', isChecked);
+        });
+
+        // Select/Deselect page permissions when a page checkbox is checked/unchecked
+        $('.page-checkbox').change(function () {
+            var isChecked = $(this).is(':checked');
+            $(this).siblings('ul').find('.permission-checkbox').prop('checked', isChecked);
+            checkAllPagesCheckbox();
+        });
+
+        // Update page checkbox and all pages checkbox when a permission checkbox is checked/unchecked
+        $('.permission-checkbox').change(function () {
+            var $pageCheckbox = $(this).closest('ul').siblings('.page-checkbox');
+            var allPermissionsChecked = $(this).closest('ul').find('.permission-checkbox:checked').length > 0;
+            $pageCheckbox.prop('checked', allPermissionsChecked);
+            checkAllPagesCheckbox();
+        });
+
+        // Function to check/uncheck "All Pages" checkbox based on individual page checkboxes
+        function checkAllPagesCheckbox() {
+            var allPagesChecked = $('.page-checkbox').length === $('.page-checkbox:checked').length;
+            $('#all_pages').prop('checked', allPagesChecked);
+        }
+
+        // Submit permissions
+        $('#submitPermissions').click(function () {
+            var groupId = $('#GroupDropdown').val();
+            var permissions = [];
+
+            $('.permission-checkbox:checked').each(function () {
+                permissions.push({
+                    PageId: $(this).data('page-id'),
+                    PermissionId: $(this).val(),
+                    PermissionName: $(this).data('permission-name')
+                });
+            });
+
+            console.log(permissions);
+            //alert("Permissions: " + JSON.stringify(permissions));
+
+            $.ajax({
+                url: '@Url.Action("UpdatePagePermissions", "AccessManagement")',
+                type: 'POST',
+                data: JSON.stringify({ groupId: groupId, permissions: permissions }),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    debugger;
+                    alert('Permissions updated successfully.');
+                },
+                error: function (xhr, status, error) {
+                    debugger;
+                    console.log("XHR Status: ", xhr.status);
+                    console.log("XHR Response Text: ", xhr.responseText);
+                    console.log("Status: ", status);
+                    console.log("Error: ", error);
+                    alert('An error occurred while updating permissions.');
+                    console.log(xhr.responseText);
+                }
+            });
+        
+        });
+
+
+
+    });
+
+</script>

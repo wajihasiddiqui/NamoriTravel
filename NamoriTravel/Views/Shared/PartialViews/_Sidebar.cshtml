@@ -1,0 +1,49 @@
+﻿@using NamoriTravel.ModelsDTO
+@{
+    var pagePermissions = ViewBag.PagePermissions as Dictionary<string, List<string>>;
+    var menuItems = ViewBag.MenuItems as List<MenuItem>;
+}
+
+<!-- Sidebar Menu Start -->
+<div class="dashboard__sidebar bg-white scroll-bar-1">
+
+    <div class="sidebar -dashboard">
+        @foreach (var item in menuItems)
+        {
+
+            <div class="sidebar__item @(item.Children.Any() ? "has-treeview" : "")">
+                <div class="sidebar__button @(item.Children.Any() ? "-has-children" : "")">
+                    <a asp-controller="@item.Name" asp-action="Index" class="d-flex items-center text-15 lh-1 fw-500">
+                        <img src="~/dashboard/img/dashboard/sidebar/@item.Iconsvg" alt="image" class="mr-15">
+                        @item.Name
+                        @if (item.Children.Any())
+                        {
+                            <i class="fas fa-angle-left right"></i>
+                        }
+                    </a>
+                </div>
+
+                @if (item.Children.Any())
+                {
+                    <div class="sidebar__subitems">
+                        @await Html.PartialAsync("PartialViews/_MenuItem", item.Children)
+                    </div>
+                }
+            </div>
+        }
+        <div class="sidebar__item">
+            <div class="sidebar__button ">
+                <a href="#" class="d-flex items-center text-15 lh-1 fw-500">
+                    <img src="~/dashboard/img/dashboard/sidebar/log-out.svg" alt="image" class="mr-15">
+                    <a asp-controller="Account" asp-action="Logout" class="nav-link">
+                        Logout
+                    </a>
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+<!-- SideBar Menu End -->
